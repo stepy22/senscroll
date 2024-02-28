@@ -1,4 +1,3 @@
-$(document).ready(function() {
     $('#query').keyup(function() {
         var query = $(this).val();
     if (query.length >= 3) {
@@ -11,18 +10,7 @@ $(document).ready(function() {
             success: function(response) {
                 var data = JSON.parse(response);
                 console.log(data);
-                $('#results').empty();
-                data.forEach(function(item) {
-                    var sentence = item.sentence.replace(new RegExp(query, 'g'), '<b style="font-size:21px">' + query + '</b>');
-                    var cleanSentence = $('<div>').html(sentence).text(); // Uklanja HTML tagove iz sentence
-
-
-var $link = $('<a>').attr('href', item.url).text(cleanSentence);
-var $paragraph = $('<p>').append($link);
-
-$('#results').append($paragraph);
-
-            });
+                displayResult(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error(textStatus, errorThrown);
@@ -30,4 +18,23 @@ $('#results').append($paragraph);
         });
         }
     });
-});
+function displayResult(data) {
+	const resultDiv = document.getElementById("result");
+
+	if (resultDiv) {
+		resultDiv.innerHTML = "";
+
+		if (data.length === 0) {
+			resultDiv.innerText = "There is no data found!";
+			return;
+		}
+
+		for (let i = 0; i < data.length; i++) {
+			const link = document.createElement("a");
+			link.href = data[i].url;
+			link.text = data[i].sentence;
+
+			resultDiv.appendChild(link);
+		}
+	}
+}
